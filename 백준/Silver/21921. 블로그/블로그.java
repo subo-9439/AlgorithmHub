@@ -6,17 +6,14 @@ import java.util.*;
 public class Main {
     static FastReader scan = new FastReader();
     static int N,X;
-    static int[] arr;
     static int[] dp;
 
     static void input(){
         N = scan.nextInt();
         X = scan.nextInt();
-        arr = new int[N+1];
         dp = new int[N+1];
         for (int i = 1; i <= N; i++) { //누적합
-            arr[i] = scan.nextInt();
-            dp[i] += dp[i-1] + arr[i];
+            dp[i] += dp[i-1] + scan.nextInt();//지금까지 방문자수 = 전날까지 합 + 현재 방문자수
         }
 
 
@@ -24,10 +21,14 @@ public class Main {
     static void pro(){
         int max = 0;
         int day = 0;
-        for (int i = X; i <= N; i++)// 최대 방문자 수 구하기
+        for (int i = X; i <= N; i++)// 기간내의 최대 방문자 수 구하기
             max = Math.max(max, dp[i] - dp[i-X]);
 
-        for (int i = X; i <= N; i++) if(max == dp[i] - dp[i-X]) day++;
+        for (int i = X; i <= N; i++)// 날짜 수 구하기
+            if(max == dp[i] - dp[i-X]) day++;
+
+
+        //출력
         if(max == 0) {
             System.out.println("SAD");
             System.exit(0);
