@@ -1,81 +1,74 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
-    static FastReader scan = new FastReader();
-    static int N,M,start,end;
-    static int[] dist;      //각 도시로 갈 수 있는 최단거리
-    static ArrayList<Edge>[] edges;
-    static class Edge {// start에서 해당 도시로 갈 때의 가중치
-        int to;
-        int weight;
-        Edge(int to ,int weight){
-            this.to = to;
-            this.weight = weight;
+
+    static List<Node>[] list;
+    static int[] dp;
+    static boolean[] check;
+
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = null;
+
+        int n = Integer.parseInt(br.readLine());
+        int m = Integer.parseInt(br.readLine());
+
+        list = new ArrayList[n+1];
+        dp = new int[n+1];
+        check = new boolean[n+1];
+
+        for(int i=1; i<n+1; i++) {
+            list[i] = new ArrayList<>();
         }
+
+        for(int i=0; i<m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int cost = Integer.parseInt(st.nextToken());
+
+            list[from].add(new Node(to,cost));
+        }
+
+        st = new StringTokenizer(br.readLine());
+        int start= Integer.parseInt(st.nextToken());
+        int destination = Integer.parseInt(st.nextToken());
+
+
+        dijkstra(start);
+        System.out.println(dp[destination]);
+//		for(int i : dp) {
+//			System.out.print(i+" ");
+//		}
+//		System.out.println();
+
     }
-    static class Info {
-        int idx;
-        int dist;
-        Info(){
-        }
-        Info(int idx, int dist){
-            this.idx = idx;
-            this.dist = dist;
-        }
 
-    }
-    static void input(){
-        N = scan.nextInt();
-        M = scan.nextInt();
-        edges = new ArrayList[N+1];
-        dist = new int[N+1];
-        for (int i = 1 ; i <= N; i++){//초기화
-            edges[i] = new ArrayList<>();
-            dist[i] = Integer.MAX_VALUE;
-        }
+    static void dijkstra(int start) {
+        Queue<Node> q = new PriorityQueue<>();
+        Arrays.fill(dp, Integer.MAX_VALUE);
 
-        for (int i = 1 ; i <= M; i++){
-            int from = scan.nextInt();
-            int to = scan.nextInt();
-            int weight = scan.nextInt();
-            edges[from].add(new Edge(to,weight));
-        }
-        start = scan.nextInt();
-        end = scan.nextInt();
-    }
-    static void dijkstra(int start){
-//        PriorityQueue<Info> pq = new PriorityQueue<Info>(Comparator.comparing(o -> o.dist));
-        PriorityQueue<Info> pq = new PriorityQueue<>((o1, o2) -> o1.dist-o2.dist);
+        q.add(new Node(start,0));
+        dp[start] =0;
 
-        // 시작지점에 대한 정보 넣어주기
-        pq.add(new Info(start,0));
-        dist[start] = 0;
+        while(!q.isEmpty()) {
+            Node node = q.poll();
+            int to = node.to;
 
-        //거리 정보들이 모두 소진 될 때까지 거리 갱신 반복
-        while (!pq.isEmpty()){
-            Info info = pq.poll();
+            if(check[to]) continue;
 
-            //꺼낸 정보가 최신 정보랑 다르면, 낡은 정보이므로 폐기한다.
-            if (dist[info.idx] != info.dist)continue;
-
-            // 연결된 모든 간선들을 통해서 다른 정점들에 대한 정보를 갱신한다.
-            for (Edge e: edges[info.idx]){
-                //새롭게 구한 거리가 기존거리보다 크다면 정보 폐기
-                if(dist[info.idx] + e.weight >= dist[e.to]) continue;
-                dist[e.to] = dist[info.idx] + e.weight;
-                pq.add(new Info(e.to,dist[e.to]));
+            check[node.to] = true;
+            for(Node next : list[to]) {
+//				System.out.println(next.to);
+                if(dp[next.to] >= dp[to] + next.cost) {
+                    dp[next.to] = dp[to] + next.cost;
+                    q.add(new Node(next.to, dp[next.to]));
+                }
             }
         }
-        System.out.println(dist[end]);
-    }
-    public static void main(String[] args) {
-        input();
-        dijkstra(start);
     }
     static class FastReader{
         BufferedReader br;
@@ -98,5 +91,20 @@ public class Main {
         int nextInt(){
             return Integer.parseInt(next());
         }
+    }
+}
+
+class Node implements Comparable<Node>{
+    int to;
+    int cost;
+
+    public Node(int to, int cost) {
+        this.to = to;
+        this.cost = cost;
+    }
+
+    @Override
+    public int compareTo(Node o) {
+        return this.cost - o.cost;
     }
 }
