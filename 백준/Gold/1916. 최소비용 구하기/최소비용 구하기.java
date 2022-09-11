@@ -5,82 +5,85 @@ import java.util.*;
 
 public class Main {
 
-    static List<Node>[] list;
+    static FastReader scan = new FastReader();
+    static int N,M,start,end;
+    static ArrayList<State>[] nodes;
+    static boolean[] visited;
     static int[] dp;
-    static boolean[] check;
 
-    public static void main(String[] args) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = null;
+    static void input(){
+        N = scan.nextInt();
+        M = scan.nextInt();
+        nodes = new ArrayList[N+1];
+        dp = new int[N+1];
 
-        int n = Integer.parseInt(br.readLine());
-        int m = Integer.parseInt(br.readLine());
-
-        list = new ArrayList[n+1];
-        dp = new int[n+1];
-        check = new boolean[n+1];
-
-        for(int i=1; i<n+1; i++) {
-            list[i] = new ArrayList<>();
+        for (int i = 1; i <= N; i++) {
+            nodes[i] = new ArrayList<>();
         }
-
-        for(int i=0; i<m; i++) {
-            st = new StringTokenizer(br.readLine());
-            int from = Integer.parseInt(st.nextToken());
-            int to = Integer.parseInt(st.nextToken());
-            int cost = Integer.parseInt(st.nextToken());
-
-            list[from].add(new Node(to,cost));
+        for (int i = 1; i <= M; i++) {
+            int x = scan.nextInt(), y = scan.nextInt(), w = scan.nextInt();
+            nodes[x].add(new State(y,w));
         }
-
-        st = new StringTokenizer(br.readLine());
-        int start= Integer.parseInt(st.nextToken());
-        int destination = Integer.parseInt(st.nextToken());
-
-
-        dijkstra(start);
-        System.out.println(dp[destination]);
-//		for(int i : dp) {
-//			System.out.print(i+" ");
-//		}
-//		System.out.println();
-
+        start = scan.nextInt();
+        end = scan.nextInt();
     }
+    static void pro(){
+        //시작점과 끝점이 정해져 있다.
+        //시작점부터 각 노드에 대해 얼마나 적은값으로 갈 수 있는지 갱신을 해주면서 가면된다.
+        Arrays.fill(dp,Integer.MAX_VALUE);
+        Queue<Dist> queue = new PriorityQueue<>((o1,o2) -> o1.value - o2.value);
+        queue.add(new Dist(start,0));
+        dp[start] = 0;
 
-    static void dijkstra(int start) {
-        Queue<Node> q = new PriorityQueue<>();
-        Arrays.fill(dp, Integer.MAX_VALUE);
+        while (!queue.isEmpty()){
+            Dist x = queue.poll();
+            if (x.value != dp[x.node]) continue;
 
-        q.add(new Node(start,0));
-        dp[start] =0;
-
-        while(!q.isEmpty()) {
-            Node node = q.poll();
-            int to = node.to;
-
-            if(check[to]) continue;
-
-            check[node.to] = true;
-            for(Node next : list[to]) {
-//				System.out.println(next.to);
-                if(dp[next.to] >= dp[to] + next.cost) {
-                    dp[next.to] = dp[to] + next.cost;
-                    q.add(new Node(next.to, dp[next.to]));
+            for (State y : nodes[x.node]){
+                if (dp[y.node] > dp[x.node] + y.weight){
+                    dp[y.node] = dp[x.node] + y.weight;
+                    queue.add(new Dist(y.node,dp[y.node]));
                 }
             }
         }
+
     }
+
+    static class Dist{
+        int node;
+        int value;
+        Dist(int node, int value){
+            this.node = node;
+            this.value = value;
+        }
+
+    }
+    static class State{
+        int node;
+        int weight;
+        State(int node, int weight){
+            this.node = node;
+            this.weight = weight;
+        }
+    }
+    public static void main(String[] args) {
+        input();
+        pro();
+        System.out.println(dp[end]);
+    }
+
     static class FastReader{
         BufferedReader br;
         StringTokenizer st;
 
-        FastReader() {
-             br = new BufferedReader(new InputStreamReader(System.in));
+        FastReader(){
+            br = new BufferedReader(new InputStreamReader(System.in));
         }
+
         String next(){
-            while (st == null || !st.hasMoreTokens()){
+            while (st == null || !st.hasMoreElements()){
                 try {
-                    st = new StringTokenizer(br.readLine());
+                     st = new StringTokenizer(br.readLine());
                 }catch (IOException e){
                     e.printStackTrace();
                 }
@@ -91,20 +94,7 @@ public class Main {
         int nextInt(){
             return Integer.parseInt(next());
         }
-    }
-}
 
-class Node implements Comparable<Node>{
-    int to;
-    int cost;
 
-    public Node(int to, int cost) {
-        this.to = to;
-        this.cost = cost;
-    }
-
-    @Override
-    public int compareTo(Node o) {
-        return this.cost - o.cost;
     }
 }
