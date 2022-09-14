@@ -104,7 +104,6 @@ class Solution {
                             cnt = mid;
                         }else {
                             R = mid-1;
-                            cnt = mid;
                         }
                     }
 //                for (Integer num : map.get(key.toString())){
@@ -112,7 +111,9 @@ class Solution {
 //                        cnt++;
 //                    }
 //                }
+                // answer[i] += scores.size() - (R +1)
                 answer[i] += scores.size() - L;
+;
 //                System.out.println("key = " + key + " answer = " +answer[i]);
             }
 //            System.out.println("===============");
