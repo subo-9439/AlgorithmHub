@@ -10,7 +10,7 @@ public class Main {
 
         int result;
         //원위 중심이 안에 있는지
-        double dist =  Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+        double dist = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
         if (x1==x2 && y1==y2 && r1==r2){
             result = -1;
         }else if ( dist == r1+r2 || Math.abs(r1-r2) == dist){
