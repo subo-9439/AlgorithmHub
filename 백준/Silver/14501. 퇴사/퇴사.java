@@ -13,14 +13,14 @@ public class Main {
     static int max = 0;
     public static void main(String[] args) {
         N = scan.nextInt();
-        t = new int[N+16];
-        p = new int[N+16];
-        dp = new int[N+16];
+        t = new int[N+15];
+        p = new int[N+15];
+        dp = new int[N+15];
         for (int i = 0; i < N; i++) {
             t[i] = scan.nextInt();  // 기간
             p[i] = scan.nextInt();  // 금액
         }
-        for (int i = 0; i <= N; i++){
+        for (int i =0; i <= N; i++){
             dp[i] = Math.max(dp[i],max);
             dp[ t[i] + i ] = Math.max(dp[ t[i] + i ] , p[i] + dp[i]);
             max = Math.max(max,dp[i]);
