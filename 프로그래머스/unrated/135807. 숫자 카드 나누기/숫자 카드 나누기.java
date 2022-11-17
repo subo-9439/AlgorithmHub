@@ -1,16 +1,15 @@
 import java.util.Arrays;
-
 class Solution {
     public int solution(int[] arrayA, int[] arrayB) {
         int answer = 0;
         Arrays.sort(arrayA);
         Arrays.sort(arrayB);
-        int a = gcd(arrayA[0],arrayA[arrayA.length-1]);
-        int b = gcd(arrayB[0],arrayB[arrayB.length-1]);
-        for (int i = 0; i < arrayA.length; i++){
+        int a = arrayA[0];
+        int b = arrayB[0];
+        for (int i = 1; i < arrayA.length; i++){
             a = gcd(arrayA[i],a);
         }
-        for (int i = 0; i < arrayB.length; i++){
+        for (int i = 1; i < arrayB.length; i++){
             b = gcd(arrayB[i],b);
         }
         boolean canUseB= b != 1;
