@@ -1,5 +1,3 @@
-import java.util.Arrays;
-import java.util.Comparator;
 
 /* *
 //TODO(x) 회의실 배정 알고리즘
@@ -9,7 +7,7 @@ import java.util.Comparator;
 
 * */
 class Solution {
-    static int ans = 0;
+    int ans = 0;
     public int solution(int k, int[][] dungeons) {
         int answer = -1;
         boolean[] isVisited = new boolean[dungeons.length];
