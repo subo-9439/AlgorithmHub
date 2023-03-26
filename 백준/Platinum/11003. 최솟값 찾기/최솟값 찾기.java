@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         int N = scan.nextInt();
         int M = scan.nextInt();
-
+        StringBuilder sb = new StringBuilder();
         Deque<Node> deque = new ArrayDeque<>();
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         //사이즈가 M 인 윈도우 사이즈에서 계속해서 최솟값을 구하려면
@@ -28,10 +28,12 @@ public class Main {
             if (deque.getFirst().getIdx() <= i-M) {
                 deque.removeFirst();
             }
-            bw.write(deque.getFirst().getValue()+ " ");
+//            bw.write(deque.getFirst().getValue()+ " ");
+            sb.append(deque.getFirst().getValue()).append(" ");
         }
-        bw.flush();
-        bw.close();
+        System.out.println(sb.toString());
+//        bw.flush();
+//        bw.close();
     }
 
     static class Node{
