@@ -5,17 +5,17 @@ import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) {
-        long H,W,N,M;
+        int H,W,N,M;
         FastReader scan = new FastReader();
         H = scan.nextInt();
         W = scan.nextInt();
         N = scan.nextInt();
         M = scan.nextInt();
 
-        long a = H / (N+1);
-        long b = H % (N+1);
-        long c = W / (M+1);
-        long d = W % (M+1);
+        int a = H / (N+1);
+        int b = H % (N+1);
+        int c = W / (M+1);
+        int d = W % (M+1);
 
         if (b > 0){
             a++;
