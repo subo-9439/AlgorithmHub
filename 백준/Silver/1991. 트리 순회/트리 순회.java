@@ -6,93 +6,79 @@ import java.util.StringTokenizer;
 
 public class Main {
     static FastReader scan = new FastReader();
-    static StringBuilder sb = new StringBuilder();
-    static int N;
-    static ArrayList<Node>[] list;
-    static void input() {
-        N = scan.nextInt();
-        list = new ArrayList[N];
-        for (int i = 0; i < N; i++) list[i] = new ArrayList<>();
+    static ArrayList<Node>[] list = new ArrayList[26];
 
-        for (int i = 0; i < N; i++){
-            int par = scan.next().charAt(0)-'A';
-            int left = scan.next().charAt(0)-'A';
-            int right = scan.next().charAt(0)-'A';
-            list[par].add(new Node(left,right));
-        }
-    }
-    static void preOrder(int par){
-        sb.append(Character.toString(par+'A'));
-        for(Node node : list[par]){
-            if(node.left!= -19){
-                preOrder(node.left);
-            }
-            if(node.right!=-19){
-                preOrder(node.right);
-            }
-        }
-    }
-    static void inOrder(int par){
-//        sb.append(Character.toString(list[par].+'A'));
-        for(Node node: list[par]){
-            if(node.left != -19){
-                inOrder(node.left);
-            }
-            sb.append(Character.toString(par+'A'));
-            if(node.right != -19){
-                inOrder(node.right);
-            }
-        }
-    }
-    static void postOrder(int par){
-        for(Node node:list[par]){
-            if(node.left != -19){
-                postOrder(node.left);
-            }
-            if(node.right != -19){
-                postOrder(node.right);
-            }
-            sb.append(Character.toString(par+'A'));
-
-        }
-
-    }
     public static void main(String[] args) {
-        input();
-        preOrder(0);
-        sb.append("\n");
+        int N = scan.nextInt();
+        for (int i = 0; i < 26; i++) {
+            list[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < N; i++) {
+            int alp = scan.next().charAt(0) - 'A';
+            char leftChar = scan.next().charAt(0);
+            char rightChar = scan.next().charAt(0);
+
+            int left = (leftChar == '.') ? -1 : leftChar - 'A';
+            int right = (rightChar == '.') ? -1 : rightChar - 'A';
+
+            list[alp].add(new Node(left, right));
+        }
+        preOrder(0); // A
+        System.out.println();
         inOrder(0);
-        sb.append("\n");
+        System.out.println();
         postOrder(0);
-        System.out.println(sb.toString());
     }
 
+    static void preOrder(int now) {
+        if (now == -1) return;
+        System.out.print((char) (now + 'A'));
+        preOrder(list[now].get(0).left);
+        preOrder(list[now].get(0).right);
+    }
 
-    static class Node{
-        int left;
-        int right;
-        public Node(int left, int right){
+    static void inOrder(int now) {
+        if (now == -1) return;
+        inOrder(list[now].get(0).left);
+        System.out.print((char) (now + 'A'));
+        inOrder(list[now].get(0).right);
+    }
+
+    static void postOrder(int now) {
+        if (now == -1) return;
+        postOrder(list[now].get(0).left);
+        postOrder(list[now].get(0).right);
+        System.out.print((char) (now + 'A'));
+    }
+
+    static class Node {
+        int left, right;
+        public Node(int left, int right) {
             this.left = left;
             this.right = right;
         }
     }
-    static class FastReader{
+
+    static class FastReader {
         BufferedReader br;
         StringTokenizer st;
-        public FastReader(){
+
+        public FastReader() {
             br = new BufferedReader(new InputStreamReader(System.in));
         }
-        String next(){
-            while (st == null || !st.hasMoreTokens()){
+
+        String next() {
+            while (st == null || !st.hasMoreTokens()) {
                 try {
                     st = new StringTokenizer(br.readLine());
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             return st.nextToken();
         }
-        int nextInt(){
+
+        int nextInt() {
             return Integer.parseInt(next());
         }
     }
