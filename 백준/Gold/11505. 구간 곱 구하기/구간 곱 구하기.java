@@ -23,7 +23,7 @@ public class Main {
         tree = new long[treeSize+1];
 
         //곱셉은 1로 초기화
-        for (int i = 0; i < tree.length; i++) {
+        for (int i = 1; i < tree.length; i++) {
             if(leafNodeLeftIndex+1 <= i && i <= leafNodeLeftIndex + N) {
                 tree[i] = scan.nextLong();
                 continue;
