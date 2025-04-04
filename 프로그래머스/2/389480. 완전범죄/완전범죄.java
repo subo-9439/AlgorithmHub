@@ -5,7 +5,10 @@ class Solution {
 
     public int solution(int[][] info, int n, int m) {
         int itemCount = info.length;
-        int[][] dp = new int[itemCount + 1][m];
+        // dp[i][j] : i개의 물건을 훔쳤을 때,
+        //            B 도둑의 흔적이 j라면,
+        //            A 도둑의 누적 흔적 최소값을 의미함
+        int[][] dp = new int[itemCount + 1][m]; 
 
         for (int i = 0; i <= itemCount; i++) {
             Arrays.fill(dp[i], INF);
@@ -16,21 +19,17 @@ class Solution {
         for (int i = 1; i <= itemCount; i++) {
             int aTrace = info[i - 1][0]; // A가 훔칠 때 남기는 흔적
             int bTrace = info[i - 1][1]; // B가 훔칠 때 남기는 흔적
-
-            for (int b = 0; b < m; b++) {
-                if (dp[i - 1][b] == INF) continue;
-
-                // 1. A 도둑이 훔치는 경우 → A 흔적 증가, B 흔적 그대로
-                int newATrace = dp[i - 1][b] + aTrace;
-                dp[i][b] = Math.min(dp[i][b], newATrace);
-
-                // 2. B 도둑이 훔치는 경우 → A 흔적 그대로, B 흔적 증가
-                int newB = b + bTrace;
-                if (newB < m) {
-                    int sameA = dp[i - 1][b];
-                    dp[i][newB] = Math.min(dp[i][newB], sameA);
+            
+            for (int j = 0; j < m; j++) {
+                if(dp[i-1][j] == INF) continue;
+                dp[i][j] = Math.min(dp[i-1][j] + aTrace, dp[i][j]);
+                
+                int newB = j + bTrace;
+                if(newB < m) {
+                    dp[i][newB] = Math.min(dp[i-1][j], dp[i][newB]);
                 }
             }
+            
         }
 
         int minATrace = INF;
