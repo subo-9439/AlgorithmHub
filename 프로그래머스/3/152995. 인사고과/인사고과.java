@@ -1,55 +1,73 @@
 import java.util.*;
 
 class Solution {
+    static int[] arr = new int[200001];
     public int solution(int[][] scores) {
-        int[] whanHo = scores[0];
-
-        // 점수 내림차순 정렬: 첫 번째 점수 기준, 같으면 두 번째 점수 오름차순
-        Arrays.sort(scores, (a, b) -> {
-            if (a[0] == b[0]) return a[1] - b[1];
-            return b[0] - a[0];
-        });
-
-        int maxB = -1;
-        List<int[]> validList = new ArrayList<>();
-
-        for (int[] score : scores) {
-            if (score[1] < maxB) {
-                if (score == whanHo) return -1;
-                continue;
-            } else {
-                maxB = Math.max(maxB, score[1]);
-                validList.add(score);
-            }
+        Score whanHo = new Score(scores[0]);
+        // 총점 기준 내림차순으로 인원수 계산
+        Queue<Score> que = new LinkedList<>();
+        
+        for (int i = 1; i < scores.length; i++) {
+            que.add(new Score(scores[i]));
         }
-
-        // 총점 기준 내림차순 정렬
-        validList.sort((a, b) -> {
-            int sumA = a[0] + a[1];
-            int sumB = b[0] + b[1];
-            return Integer.compare(sumB, sumA);
-        });
-
+        int answer = 0;
         int rank = 1;
-        int prevSum = -1;
-        int sameRankCount = 0;
-
-        for (int i = 0; i < validList.size(); i++) {
-            int sum = validList.get(i)[0] + validList.get(i)[1];
-
-            if (sum != prevSum) {
-                rank += sameRankCount;
-                sameRankCount = 1;
-                prevSum = sum;
-            } else {
-                sameRankCount++;
-            }
-
-            if (Arrays.equals(validList.get(i), whanHo)) {
-                return rank;
-            }
+        int curCnt = 0;
+        //인센티브 받는 사원들분포도 카운트하기
+        while(!que.isEmpty()) {
+            Score other = que.poll();
+            if(other.canReceive()) arr[other.getTotal()]++;
         }
 
-        return -1; // 이론상 도달하지 않음
+        for (int i = 200000; i >= 0; i--) {
+            if(i == whanHo.getTotal()) {
+                break;
+            }
+            curCnt += arr[i];
+        }
+        
+        rank += curCnt;
+        if(!whanHo.canReceive()) return -1;
+        return rank;
+ 
+    }
+    
+    public static class Score implements<Score>{
+        int a;
+        int b;
+        static int maxA;
+        static int maxB;        
+        
+        Score (int[] arr) {
+            this.a = arr[0];
+            this.b = arr[1];
+            if(a > maxA) { // 사원들의 a,b가장큰점수 기록
+                maxA = a;
+            }
+            if(b > maxB) {
+                maxB = b;
+            }
+        }
+        
+        //둘다 작으면 못받음. 하나라도 크면 받음
+        //하나라도 같거나 크면 받을 수 잇음.
+        boolean canReceive() {
+            return maxA <= this.a || maxB <= this.b;
+        }
+        
+        int getTotal() {
+            return this.a + this.b;
+        }
+        
+        private int getDiff() {
+            return Math.abs(this.a - this.b);
+        }
+        
+        @Override
+        public int comapreTo(Score other) {
+            if(other.getTotal() == this.getTotal()) this.getDiff() - other.getDiff();
+            return other.getTotal() - this.getTotal();
+        }
+    
     }
 }
