@@ -1,73 +1,45 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
+  public static void main(String[] args) throws IOException {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    StringBuilder sb = new StringBuilder();
 
-    static FastReader scan = new FastReader();
-    static int N;
-    static String[] arr;
-    public static void main(String[] args){
-        input();
-        pro();
+    int N = Integer.parseInt(br.readLine());
+
+    for (int i = 0; i < N; i++) {
+      String line = br.readLine();
+      Stack<Character> stack = new Stack<>();
+      boolean isValid = true;
+
+      for (int j = 0; j < line.length(); j++) {
+        char ch = line.charAt(j);
+        if (ch == '(') {
+          stack.push(ch);
+        } else {
+          if (stack.isEmpty()) {
+            sb.append("NO\n");
+            isValid = false;
+            break;
+          } else {
+            stack.pop();
+          }
+        }
+      }
+
+      if (!isValid) continue;
+
+      if (stack.isEmpty()) {
+        sb.append("YES\n");
+      } else {
+        sb.append("NO\n");
+      }
     }
 
-    private static void pro() {
-        for (int i = 0; i < N; i++) {
-            Stack<Character> stack = new Stack<>();
-            boolean isTrue = true;
-            for (int j = 0; j < arr[i].length(); j++) {
-                if (arr[i].charAt(j) == '('){
-                    stack.push('(');//사실 스택개념만 이용해도됨 뭐 일단
-                }else {
-                    if (!stack.isEmpty()){
-                        stack.pop();
-                    }else {
-                        System.out.println("NO");
-                        isTrue = false;
-                        break;
-                    }
-                }
-            }
-            if (!isTrue) continue;
-            if (stack.isEmpty()){
-                System.out.println("YES");
-            }else {
-                System.out.println("NO");
-            }
-        }
-    }
-
-    private static void input() {
-        N = scan.nextInt();
-        arr = new String[N];
-        for (int i = 0; i < N; i++) arr[i] = scan.next();
-    }
-
-
-    static class FastReader{
-        BufferedReader br;
-        StringTokenizer st;
-
-        FastReader() {
-            br = new BufferedReader(new InputStreamReader(System.in));
-        }
-
-        String next() {
-            while (st == null || !st.hasMoreTokens()) {
-                try {
-                    st = new StringTokenizer(br.readLine());
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-            return st.nextToken();
-        }
-
-        int nextInt(){
-            return Integer.parseInt(next());
-        }
-    }
+    System.out.print(sb);
+  }
 }
