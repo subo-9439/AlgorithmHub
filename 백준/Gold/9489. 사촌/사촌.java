@@ -3,49 +3,64 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        while (true) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int n = Integer.parseInt(st.nextToken());
-            int k = Integer.parseInt(st.nextToken());
+    static FastReader scan = new FastReader();
 
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+
+        while (true) {
+            int n = scan.nextInt();
+            int k = scan.nextInt();
             if (n == 0 && k == 0) break;
 
             int[] arr = new int[n + 1];
             int[] parent = new int[n + 1];
-            int target = 0;
-
-            parent[0] = -1;
+            int targetIdx = 0;
             arr[0] = -1;
-            int idx = -1;
+            parent[0] = -1;
+            int pIdx = -1;
 
-            st = new StringTokenizer(br.readLine());
             for (int i = 1; i <= n; i++) {
-                arr[i] = Integer.parseInt(st.nextToken());
-                if (arr[i] == k) target = i;
-                if (arr[i] != arr[i - 1] + 1) idx++;
-                parent[i] = idx;
+                arr[i] = scan.nextInt();
+                if (arr[i] == k) targetIdx = i;
+                if (arr[i] != arr[i - 1] + 1) pIdx++;
+                parent[i] = pIdx;
             }
 
-            int answer = 0;
-
-            // 루트이면 사촌 없음
-            if (target == 1) {
+            // Step 1: 루트면 사촌 없음
+            if (targetIdx == 1) {
                 sb.append("0\n");
                 continue;
             }
 
+            // Step 2: 사촌 개수 계산
+            int answer = 0;
             for (int i = 1; i <= n; i++) {
-                if (i == target) continue;
-                if (parent[i] != parent[target] && parent[parent[i]] == parent[parent[target]]) {
+                if (i == targetIdx) continue;
+                if (parent[i] != parent[targetIdx] && parent[parent[i]] == parent[parent[targetIdx]]) {
                     answer++;
                 }
             }
 
             sb.append(answer).append("\n");
         }
+
+        // Step 3: 출력
         System.out.print(sb);
+    }
+
+    static class FastReader {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        String next() {
+            while (st == null || !st.hasMoreTokens()) {
+                try { st = new StringTokenizer(br.readLine()); }
+                catch (IOException e) { e.printStackTrace(); }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() { return Integer.parseInt(next()); }
     }
 }
