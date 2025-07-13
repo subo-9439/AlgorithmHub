@@ -3,7 +3,8 @@ import java.util.*;
 
 public class Main {
     static int N, root;
-    static int[] leftChild, rightChild, isChild;
+    static int[] leftChild, rightChild;
+    static boolean[] isChild;
     static int[] levelMin, levelMax;
     static int curCol = 0, maxLevel = 0;
 
@@ -13,7 +14,7 @@ public class Main {
 
         leftChild = new int[N + 1];
         rightChild = new int[N + 1];
-        isChild = new int[N + 1];
+        isChild = new boolean[N + 1];
         levelMin = new int[N + 1];
         levelMax = new int[N + 1];
 
@@ -25,22 +26,26 @@ public class Main {
             int r = fr.nextInt();
             leftChild[num] = l;
             rightChild[num] = r;
-            if (l != -1) isChild[l] = 1;
-            if (r != -1) isChild[r] = 1;
+            if (l != -1) isChild[l] = true;
+            if (r != -1) isChild[r] = true;
         }
 
-        // 루트 노드 찾기
+        // 루트 찾기: 자식으로 한 번도 등장하지 않은 노드
         for (int i = 1; i <= N; i++) {
-            if (isChild[i] == 0) {
+            if (!isChild[i]) {
                 root = i;
                 break;
             }
         }
 
+        // 중위 순회하며 열 번호 부여
         inorder(root, 1);
 
-        int ansLevel = 1, ansWidth = 1;
-        for (int i = 1; i <= maxLevel; i++) {
+        // 레벨별 최대 너비 계산
+        int ansLevel = 1;
+        int ansWidth = levelMax[1] - levelMin[1] + 1;
+        for (int i = 2; i <= maxLevel; i++) {
+            if (levelMin[i] == Integer.MAX_VALUE) continue; // 방문하지 않은 레벨 무시
             int width = levelMax[i] - levelMin[i] + 1;
             if (width > ansWidth) {
                 ansWidth = width;
@@ -54,16 +59,13 @@ public class Main {
     static void inorder(int node, int depth) {
         if (node == -1) return;
 
-        // 왼쪽 자식 방문
         inorder(leftChild[node], depth + 1);
 
-        // 현재 노드 처리
         curCol++;
         levelMin[depth] = Math.min(levelMin[depth], curCol);
         levelMax[depth] = Math.max(levelMax[depth], curCol);
         maxLevel = Math.max(maxLevel, depth);
 
-        // 오른쪽 자식 방문
         inorder(rightChild[node], depth + 1);
     }
 
