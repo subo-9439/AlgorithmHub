@@ -5,59 +5,54 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-    static FastReader scan = new FastReader();
+    static FastReader sc = new FastReader();
+    static StringBuilder sb = new StringBuilder();
     static int N;
-    static int[] arr;
+    static int[] a;
+    static void input(){
+        N = sc.nextInt();
+        a = new int[N+1];
+        for(int i=1;i<=N;i++){
+            a[i] = sc.nextInt();
+        }
+    }
+    static void pro(){
+        Arrays.sort(a,1,N+1);
+        int L=1,R=N;
+        int cnt=0;
+
+        for(int target_idx=1;target_idx<=N;target_idx++){
+            while (L < R){
+                 if(L == target_idx) L++;
+                 else if(R == target_idx) R--;
+                 else {
+                     if(a[target_idx]<a[L]+a[R])R--;
+                     else if(a[target_idx]>a[L]+a[R]) L++;
+                     else if(a[target_idx] == a[L]+a[R]) {
+                         cnt++;
+                         break;
+                     }
+                 }
+            }
+            L=1;R=N;
+        }
+        System.out.println(cnt);
+    }
 
     public static void main(String[] args) {
-        N = scan.nextInt();
-        arr = new int[N];
-
-
-        for (int i = 0; i < N; i++)
-            arr[i] = scan.nextInt();
-
-        Arrays.sort(arr);
-
-        int count = 0;
-
-        for (int k = 0; k < N; k++) {
-            int find = arr[k];
-            int leftIdx = 0;
-            int rightIdx = N-1;
-
-            while (leftIdx < rightIdx) {
-                int sum = arr[leftIdx] + arr[rightIdx];
-                if (sum == find) {
-                    if (leftIdx != k && rightIdx != k){
-                        count++;
-                        break;
-                    }else if(leftIdx == k) {
-                        leftIdx++;
-                    }else {
-                        rightIdx--;
-                    }
-                }else if (sum > find) {
-                    rightIdx--;
-                }else {
-                    leftIdx++;
-                }
-            }
-
-        }
-        System.out.println(count);
+        input();
+        pro();
     }
 
     static class FastReader{
         BufferedReader br;
         StringTokenizer st;
-
-        FastReader() {
+        public FastReader(){
             br = new BufferedReader(new InputStreamReader(System.in));
         }
 
-        String next() {
-            while (st == null || !st.hasMoreTokens()) {
+        String next(){
+            while (st==null || !st.hasMoreElements()){
                 try {
                     st = new StringTokenizer(br.readLine());
                 }catch (IOException e){
@@ -67,9 +62,8 @@ public class Main {
             return st.nextToken();
         }
 
-        Integer nextInt() {
+        int nextInt(){
             return Integer.parseInt(next());
         }
-
     }
 }
