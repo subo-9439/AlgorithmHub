@@ -1,85 +1,85 @@
+//50_BOJ_1717_집합표현하기
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Main {
-    static FastReader scan = new FastReader();
-    static int N,M;
-    static int[] parent;
+  static FastReader scan = new FastReader();
+  static int[] parent;
 
-    static void input(){
-        N = scan.nextInt();
-        M = scan.nextInt();
-        parent = new int[N+1];
-        for (int i = 0; i <= N; i++) parent[i] = i;
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder();
+    int n = scan.nextInt();
+    int m = scan.nextInt();
+
+    parent = new int[n + 1];
+    for (int i = 1; i <= n; i++) {
+      parent[i] = i;
     }
 
-    static void pro(){
-        for (int i = 0; i < M; i++){
-            int order = scan.nextInt();
-            int x = scan.nextInt();
-            int y = scan.nextInt();
-
-
-            if (order == 0){
-                union(x,y);
-            }else {
-                if(isSame(x,y)) System.out.println("YES");
-                else System.out.println("NO");
-            }
+    for (int i = 0; i < m; i++) {
+      int command = scan.nextInt();
+      int a = scan.nextInt();
+      int b = scan.nextInt();
+      if (command == 0) {
+        union(a, b);
+      } else {
+        if (checkSame(a, b)) {
+          sb.append("YES\n");
+        } else {
+          sb.append("NO\n");
         }
+      }
+    }
+    System.out.println(sb.toString());
+  }
+
+  static void union(int a, int b) {
+    a = find(a);
+    b = find(b);
+    if (a != b) {
+      parent[b] = a;
+    }
+  }
+
+  static int find(int a) {
+    if (a == parent[a]) {
+      return a;
+    } else {
+      return parent[a] = find(parent[a]);
+    }
+  }
+
+  static boolean checkSame(int a, int b) {
+    a = find(a);
+    b = find(b);
+    return a == b;
+  }
+
+  static class FastReader {
+    BufferedReader br;
+    StringTokenizer st;
+
+    FastReader() {
+      br = new BufferedReader(new InputStreamReader(System.in));
     }
 
-    static int find(int x){
-        if(x == parent[x]) return x;
-        return parent[x] = find(parent[x]);
-    }
-
-    static void union(int x,int y){
-        x = find(x);
-        y = find(y);
-
-        if(x!=y){
-            if(x<y)parent[y] = x;
-            else parent[x] = y;
+    String next() {
+      while (st == null || !st.hasMoreElements()) {
+        try {
+          st = new StringTokenizer(br.readLine());
+        } catch (IOException e) {
+          e.printStackTrace();
         }
+      }
+      return st.nextToken();
     }
 
-    static boolean isSame(int x, int y){
-        x = find(x);
-        y = find(y);
-        return x == y;
+    int nextInt() {
+      return Integer.parseInt(next());
     }
 
-    public static void main(String[] args) {
-        input();
-        pro();
-    }
-    static class FastReader{
-        BufferedReader br;
-        StringTokenizer st;
-
-        public FastReader(){
-            br = new BufferedReader(new InputStreamReader(System.in));
-        }
-
-        String next(){
-            while (st == null || !st.hasMoreTokens()){
-                try {
-                    st = new StringTokenizer(br.readLine());
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-            return st.nextToken();
-        }
-
-        int nextInt(){
-            return Integer.parseInt(next());
-        }
-
-
-    }
+  }
 }
