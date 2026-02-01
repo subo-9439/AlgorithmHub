@@ -1,102 +1,127 @@
+//49_BOJ2251_물의양구하기
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-class State{
-    int[] X;
-    State (int[] X){
-        this.X = new int[3];
-        for(int i=0;i<3;i++) this.X[i] = X[i];
-    }
-
-    State move(int from, int to, int[] Limit){
-        //from 물통에서 to 물통으로 물을 옮긴다.
-        int[] nX = new int[] {X[0],X[1],X[2]};
-        if(X[from] + X[to] <= Limit[to]) { //만약 from을 전부 부을 수 있다면
-            nX[to] = nX[from] + nX[to];
-            nX[from] = 0;
-        }else { //from의 일부만 옮길 수 있는 경우
-            nX[from] -= Limit[to] - nX[to];
-            nX[to] = Limit[to];
-        }
-        return new State(nX);
-    }
-
-}
+/*
+입력 8 9 10
+출력 1 2 8 9 10
+특정무게상태를 1개의 노드로 가정하고 그래프를 역으로 그리기
+*/
 public class Main {
-    static FastReader sc = new FastReader();
-    static StringBuilder sb = new StringBuilder();
+  static FastReader scan = new FastReader();
+  // 용량(최대로 담을 수 있는 양)
+  static int capA, capB, capC;
 
-    static int[] Limit;
-    static boolean[] possible;
-    static boolean[][][] visit;
+  static boolean[][] visited; // visited[a][b]
+  static boolean[] possibleC; // possibleC[c] (A가 0일 때 C가 c 가능?)
 
-    static void input(){
-        Limit = new int[3];
-        for(int i=0; i<3; i++) Limit[i] = sc.nextInt();
-        visit = new boolean[201][201][201];
-        possible = new boolean[201];
+  public static void main(String[] args) {
+    capA = scan.nextInt();
+    capB = scan.nextInt();
+    capC = scan.nextInt();
+
+    visited = new boolean[capA + 1][capB + 1];
+    possibleC = new boolean[capC + 1];
+
+    bfs();
+
+    StringBuilder sb = new StringBuilder();
+    for (int c = 0; c <= capC; c++) {
+      if (possibleC[c])
+        sb.append(c).append(' ');
     }
-    static void bfs(int x1,int x2,int x3){
-        Queue<State> Q = new LinkedList<>();
-        visit[x1][x2][x3] = true;
-        Q.add(new State(new int[]{x1,x2,x3}));
+    System.out.print(sb.toString().trim());
+  }
 
-        //BFS과정 시작
-        while (!Q.isEmpty()){
-            State st = Q.poll();
-            if(st.X[0] == 0) possible[st.X[2]] = true;
-            for(int from=0; from<3; from++){
-                for(int to=0; to<3; to++){
-                    if(from == to) continue;
-                    //i번 물통에서 j번 물통으로 옮긴다.
-                    State nxt = st.move(from,to,Limit);
+  static void bfs() {
+    ArrayDeque<StateAB> q = new ArrayDeque<>();
 
-                    //만약 바뀐 상태를 탐색한 적이 없다면
-                    if(!visit[nxt.X[0]][nxt.X[1]][nxt.X[2]]){
-                        visit[nxt.X[0]][nxt.X[1]][nxt.X[2]] = true;
-                        Q.add(nxt);
-                    }
-                }
-           }
+    // A=0, B=0, C는 가득채운상태로 BFS시작
+    visited[0][0] = true;
+    q.add(new StateAB(0, 0));
+
+    while (!q.isEmpty()) {
+      StateAB cur = q.poll();
+      int a = cur.a;
+      int b = cur.b;
+      int c = capC - a - b; // 총 물은 항상 capC
+
+      // 문제 요구: A가 비어있을 때 C의 물양 기록
+      if (a == 0) {
+        possibleC[c] = true;
+      }
+
+      // 현재 물양 배열 (0:A, 1:B, 2:C)
+      int[] now = { a, b, c };
+      int[] cap = { capA, capB, capC };
+
+      // 6가지 붓기: from -> to (from != to)
+      for (int from = 0; from < 3; from++) {
+        for (int to = 0; to < 3; to++) {
+          if (from == to)
+            continue;
+
+          int[] next = { now[0], now[1], now[2] };
+
+          // 얼마나 옮길 수 있나?
+          // = (from에 있는 물) 과 (to의 남은 공간) 중 작은 값
+          int move = Math.min(next[from], cap[to] - next[to]);
+
+          next[from] -= move;
+          next[to] += move;
+
+          int nextA = next[0];
+          int nextB = next[1];
+
+          if (!visited[nextA][nextB]) {
+            visited[nextA][nextB] = true;
+            q.add(new StateAB(nextA, nextB));
+          }
         }
+      }
     }
-    static void pro(){
-        bfs(0,0,Limit[2]);
-        for(int i=0; i<=200;i++){
-            if(possible[i]) sb.append(i).append(' ');
-        }
-        System.out.println(sb);
-    }
-    
-    public static void main(String[] args) {
-        input();
-        pro();
+  }
+
+  static class StateAB {
+    int a;
+    int b;
+
+    StateAB(int a, int b) {
+      this.a = a;
+      this.b = b;
     }
 
-    static class FastReader{
-        BufferedReader br ;
-        StringTokenizer st;
+  }
 
-        public FastReader(){
-            br = new BufferedReader(new InputStreamReader(System.in));
-        }
-        String next(){
-            while(st==null||!st.hasMoreElements()){
-                try{
-                    st = new StringTokenizer(br.readLine());
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-            return st.nextToken();
-        }
+  static class FastReader {
+    BufferedReader br;
+    StringTokenizer st;
 
-        int nextInt(){
-            return Integer.parseInt(next());
-        }
+    FastReader() {
+      br = new BufferedReader(new InputStreamReader(System.in));
     }
+
+    String next() {
+      while (st == null || !st.hasMoreElements()) {
+        try {
+          st = new StringTokenizer(br.readLine());
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      return st.nextToken();
+    }
+
+    int nextInt() {
+      return Integer.parseInt(next());
+    }
+
+  }
+
 }
