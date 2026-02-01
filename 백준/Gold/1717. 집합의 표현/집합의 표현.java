@@ -40,7 +40,7 @@ public class Main {
     a = find(a);
     b = find(b);
     if (a != b) {
-      parent[b] = a;
+      parent[a] = b;
     }
   }
 
